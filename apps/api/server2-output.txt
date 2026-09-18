@@ -1,0 +1,230 @@
+[32minfo[39m: Starting Nest application... {"context":"NestFactory","timestamp":"2026-08-05T17:27:07.251Z"}
+[32minfo[39m: AppModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.254Z"}
+[32minfo[39m: BullModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.254Z"}
+[32minfo[39m: PrismaModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.254Z"}
+[32minfo[39m: PassportModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.254Z"}
+[32minfo[39m: ConfigHostModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.255Z"}
+[32minfo[39m: ThrottlerModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.255Z"}
+[32minfo[39m: DiscoveryModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.255Z"}
+[32minfo[39m: ConfigModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.255Z"}
+[32minfo[39m: ConfigModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.255Z"}
+[32minfo[39m: EventEmitterModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: BullModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: CommonModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: BullModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: BullModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: BullModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: JwtModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: JwtModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: WebsocketModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: QueueModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: TeamsModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: CustomFieldsModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: LeadsModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.256Z"}
+[32minfo[39m: DealsModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: TasksModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: CalendarModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: DashboardModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: ReportsModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: NotificationsModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: StorageModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: WorkspaceModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: SettingsModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: AiModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: ContactsModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: AuthModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: WhatsappModule dependencies initialized {"context":"InstanceLoader","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: WebSocket Gateway initialized {"context":"AppGateway","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: AppGateway subscribed to the "typing:start" message {"context":"WebSocketsController","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: AppGateway subscribed to the "typing:stop" message {"context":"WebSocketsController","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: AppGateway subscribed to the "conversation:join" message {"context":"WebSocketsController","timestamp":"2026-08-05T17:27:07.257Z"}
+[32minfo[39m: AppGateway subscribed to the "conversation:leave" message {"context":"WebSocketsController","timestamp":"2026-08-05T17:27:07.258Z"}
+[32minfo[39m: NotificationsController {/api/v1/notifications}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.258Z"}
+[32minfo[39m: Mapped {/api/v1/notifications, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.258Z"}
+[32minfo[39m: Mapped {/api/v1/notifications/read-all, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.258Z"}
+[32minfo[39m: Mapped {/api/v1/notifications/:id/read, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.258Z"}
+[32minfo[39m: Mapped {/api/v1/notifications/preferences, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.258Z"}
+[32minfo[39m: Mapped {/api/v1/notifications/preferences, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.259Z"}
+[32minfo[39m: AuthController {/api/v1/auth}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.259Z"}
+[32minfo[39m: Mapped {/api/v1/auth/register, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.259Z"}
+[32minfo[39m: Mapped {/api/v1/auth/login, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.259Z"}
+[32minfo[39m: Mapped {/api/v1/auth/login/totp, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.259Z"}
+[32minfo[39m: Mapped {/api/v1/auth/refresh, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.259Z"}
+[32minfo[39m: Mapped {/api/v1/auth/logout, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.259Z"}
+[32minfo[39m: Mapped {/api/v1/auth/forgot-password, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/auth/reset-password, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/auth/me, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/auth/2fa/enable, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/auth/2fa/confirm, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/auth/2fa/disable, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: WorkspaceController {/api/v1/workspaces}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/workspaces/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/workspaces/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/workspaces/:id/logo, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/workspaces/:id/members, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/workspaces/:id/members/:memberId, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/workspaces/:id/members/:memberId, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.260Z"}
+[32minfo[39m: Mapped {/api/v1/workspaces/:id/invitations, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/workspaces/:id/invitations, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: StorageController {/api/v1/storage}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/storage/presign, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/storage/url/*fileKey, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: TeamsController {/api/v1}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/departments, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/departments, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/departments/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/teams, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/teams, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/teams/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/teams/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/teams/:id/members, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/teams/:id/members/:memberId, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: CustomFieldsController {/api/v1/custom-fields}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/custom-fields, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/custom-fields, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.261Z"}
+[32minfo[39m: Mapped {/api/v1/custom-fields/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/custom-fields/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/custom-fields/reorder, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: ContactsController {/api/v1/contacts}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/duplicates, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/merge, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/import, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/import/:jobId, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/export, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/export/:jobId, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id/restore, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id/timeline, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id/notes, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id/notes, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.262Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id/notes/:noteId, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/contacts/:id/notes/:noteId, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: LeadsController {/api/v1}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/pipelines, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/pipelines, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/pipelines/:id/stages, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/pipelines/:id/stages, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/pipelines/:id/stages/:stageId, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/pipelines/:id/stages/:stageId, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/pipelines/:id/stages/reorder, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads/kanban, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads/:id/stage, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads/:id/convert, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.263Z"}
+[32minfo[39m: Mapped {/api/v1/leads/:id/history, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: DealsController {/api/v1}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deal-pipelines, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deal-pipelines, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deal-pipelines/:id/stages, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deal-pipelines/:id/stages, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deal-pipelines/:id/stages/:stageId, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deal-pipelines/:id/stages/:stageId, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals/kanban, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals/forecast, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals/:id/won, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.264Z"}
+[32minfo[39m: Mapped {/api/v1/deals/:id/lost, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/deals/:id/history, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/deals/:id/notes, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/deals/:id/notes, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: WebhookController {/api/v1/webhooks/whatsapp}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/webhooks/whatsapp, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/webhooks/whatsapp, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: ConversationsController {/api/v1/conversations}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/conversations, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:id/labels, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.265Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:id/labels/:labelId, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:id/read, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: MessagesController {/api/v1/conversations/:conversationId}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:conversationId/messages, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:conversationId/messages, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:conversationId/messages/schedule, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:conversationId/messages/:messageId/schedule, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:conversationId/internal-notes, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/conversations/:conversationId/internal-notes, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: TemplatesController {/api/v1/message-templates}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/message-templates, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/message-templates, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.266Z"}
+[32minfo[39m: Mapped {/api/v1/message-templates/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/message-templates/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/message-templates/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/message-templates/sync, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: BroadcastsController {/api/v1/broadcasts}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/broadcasts, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/broadcasts, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/broadcasts/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/broadcasts/:id/send, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/broadcasts/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: QuickRepliesController {/api/v1/quick-replies}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/quick-replies, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/quick-replies, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/quick-replies/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/quick-replies/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: AIController {/api/v1/ai}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/ai/suggest-reply, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/ai/summarize-conversation, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.267Z"}
+[32minfo[39m: Mapped {/api/v1/ai/rewrite, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/ai/correct-grammar, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/ai/translate, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/ai/qualify-lead, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/ai/sentiment-analysis, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/ai/suggest-tags, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/ai/generate-followup, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/ai/search, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/ai/insights, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: TasksController {/api/v1/tasks}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/tasks, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/tasks, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/tasks/kanban, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/tasks/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/tasks/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/tasks/:id/complete, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/tasks/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: CalendarController {/api/v1/calendar/events}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/calendar/events, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.268Z"}
+[32minfo[39m: Mapped {/api/v1/calendar/events, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/calendar/events/:id, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/calendar/events/:id, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/calendar/events/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: ReportsController {/api/v1/reports}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/reports/sales, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/reports/revenue, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/reports/agent-performance, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/reports/pipeline, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/reports/whatsapp, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/reports/export, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: SettingsController {/api/v1/settings}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/settings, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/settings/profile, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/settings/profile, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/settings/whatsapp, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/settings/whatsapp/test, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/settings/ai, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.269Z"}
+[32minfo[39m: Mapped {/api/v1/settings/ai/test, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Mapped {/api/v1/settings/smtp, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Mapped {/api/v1/settings/smtp/test, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Mapped {/api/v1/settings/security, PATCH} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Mapped {/api/v1/settings/api-keys, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Mapped {/api/v1/settings/api-keys, POST} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Mapped {/api/v1/settings/api-keys/:id, DELETE} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Mapped {/api/v1/settings/audit-logs, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: DashboardController {/api/v1/dashboard}: {"context":"RoutesResolver","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Mapped {/api/v1/dashboard, GET} route {"context":"RouterExplorer","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Prisma connected to database {"context":"PrismaService","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: Nest application successfully started {"context":"NestApplication","timestamp":"2026-08-05T17:27:07.270Z"}
+[32minfo[39m: NexaCRM API listening on port 3001 [development] {"timestamp":"2026-08-05T17:27:07.271Z"}
+[32minfo[39m: Swagger docs: http://localhost:3001/docs {"timestamp":"2026-08-05T17:27:07.271Z"}

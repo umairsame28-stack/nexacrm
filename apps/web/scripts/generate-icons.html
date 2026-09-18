@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexaCRM Icon Generator</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #0B1020;
+      color: #fff;
+    }
+    h1 {
+      background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .icon-card {
+      background: #111827;
+      border: 1px solid #263247;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .icon-preview {
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-center;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+    button {
+      background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .instructions {
+      background: #111827;
+      border: 1px solid #263247;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+    .instructions h2 {
+      margin-top: 0;
+      color: #6366F1;
+    }
+    .instructions ol {
+      line-height: 1.8;
+    }
+    .instructions code {
+      background: #0B1020;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #8B5CF6;
+    }
+  </style>
+</head>
+<body>
+  <h1>NexaCRM PWA Icon Generator</h1>
+  
+  <div class="instructions">
+    <h2>Instructions</h2>
+    <ol>
+      <li>Click "Download" for each icon size below</li>
+      <li>Save icons to <code>apps/web/public/icons/</code></li>
+      <li>Rename files to match expected names:
+        <ul>
+          <li><code>icon-192x192.png</code></li>
+          <li><code>icon-512x512.png</code></li>
+          <li><code>icon-192x192-maskable.png</code></li>
+          <li><code>icon-512x512-maskable.png</code></li>
+          <li><code>apple-touch-icon.png</code> (180x180)</li>
+        </ul>
+      </li>
+      <li>Create <code>favicon.ico</code> from the 192x192 icon using online converter</li>
+    </ol>
+  </div>
+
+  <div class="icon-grid" id="iconGrid"></div>
+
+  <script>
+    const icons = [
+      { name: 'Icon 192x192', size: 192, padding: 32, maskable: false },
+      { name: 'Icon 512x512', size: 512, padding: 85, maskable: false },
+      { name: 'Maskable 192x192', size: 192, padding: 48, maskable: true },
+      { name: 'Maskable 512x512', size: 512, padding: 128, maskable: true },
+      { name: 'Apple Touch Icon', size: 180, padding: 30, maskable: false },
+    ];
+
+    function drawNexaCRMIcon(canvas, size, padding, maskable) {
+      const ctx = canvas.getContext('2d');
+      
+      // Set canvas size
+      canvas.width = size;
+      canvas.height = size;
+      
+      // Background
+      if (maskable) {
+        // Solid background for maskable icons
+        const gradient = ctx.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#6366F1');
+        gradient.addColorStop(1, '#8B5CF6');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, size, size);
+      } else {
+        // Rounded square background for standard icons
+        const gradient = ctx.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#6366F1');
+        gradient.addColorStop(1, '#8B5CF6');
+        ctx.fillStyle = gradient;
+        
+        const radius = size * 0.15;
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(size - radius, 0);
+        ctx.quadraticCurveTo(size, 0, size, radius);
+        ctx.lineTo(size, size - radius);
+        ctx.quadraticCurveTo(size, size, size - radius, size);
+        ctx.lineTo(radius, size);
+        ctx.quadraticCurveTo(0, size, 0, size - radius);
+        ctx.lineTo(0, radius);
+        ctx.quadraticCurveTo(0, 0, radius, 0);
+        ctx.closePath();
+        ctx.fill();
+      }
+      
+      // Draw "N" letter
+      const letterSize = size - (padding * 2);
+      const letterX = padding;
+      const letterY = padding;
+      const strokeWidth = letterSize * 0.15;
+      
+      ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = strokeWidth;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      
+      // N letter path
+      ctx.beginPath();
+      // Left vertical
+      ctx.moveTo(letterX + strokeWidth/2, letterY);
+      ctx.lineTo(letterX + strokeWidth/2, letterY + letterSize);
+      // Diagonal
+      ctx.lineTo(letterX + letterSize - strokeWidth/2, letterY);
+      // Right vertical
+      ctx.lineTo(letterX + letterSize - strokeWidth/2, letterY + letterSize);
+      
+      ctx.stroke();
+      
+      // Fill the letter
+      ctx.fillStyle = '#FFFFFF';
+      
+      // Left bar
+      ctx.fillRect(letterX, letterY, strokeWidth, letterSize);
+      
+      // Right bar
+      ctx.fillRect(letterX + letterSize - strokeWidth, letterY, strokeWidth, letterSize);
+      
+      // Diagonal bar (polygon)
+      ctx.beginPath();
+      ctx.moveTo(letterX + strokeWidth, letterY);
+      ctx.lineTo(letterX + letterSize, letterY + letterSize - strokeWidth);
+      ctx.lineTo(letterX + letterSize - strokeWidth, letterY + letterSize);
+      ctx.lineTo(letterX, letterY + strokeWidth);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Add subtle shadow for depth
+      if (!maskable) {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+        ctx.shadowBlur = size * 0.02;
+        ctx.shadowOffsetY = size * 0.01;
+      }
+    }
+
+    function createIconCard(iconConfig) {
+      const card = document.createElement('div');
+      card.className = 'icon-card';
+      
+      const preview = document.createElement('div');
+      preview.className = 'icon-preview';
+      
+      const canvas = document.createElement('canvas');
+      drawNexaCRMIcon(canvas, iconConfig.size, iconConfig.padding, iconConfig.maskable);
+      preview.appendChild(canvas);
+      
+      const name = document.createElement('h3');
+      name.textContent = iconConfig.name;
+      name.style.marginBottom = '8px';
+      name.style.fontSize = '16px';
+      
+      const dimensions = document.createElement('p');
+      dimensions.textContent = `${iconConfig.size}×${iconConfig.size}px`;
+      dimensions.style.color = '#94A3B8';
+      dimensions.style.fontSize = '14px';
+      dimensions.style.marginBottom = '16px';
+      
+      const downloadBtn = document.createElement('button');
+      downloadBtn.textContent = 'Download PNG';
+      downloadBtn.onclick = () => downloadIcon(canvas, iconConfig);
+      
+      card.appendChild(preview);
+      card.appendChild(name);
+      card.appendChild(dimensions);
+      card.appendChild(downloadBtn);
+      
+      return card;
+    }
+
+    function downloadIcon(canvas, iconConfig) {
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${iconConfig.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    }
+
+    // Generate all icons
+    const grid = document.getElementById('iconGrid');
+    icons.forEach(iconConfig => {
+      grid.appendChild(createIconCard(iconConfig));
+    });
+  </script>
+</body>
+</html>

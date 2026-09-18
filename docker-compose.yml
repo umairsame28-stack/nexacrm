@@ -1,0 +1,159 @@
+version: '3.9'
+
+services:
+  # ─── Reverse proxy ────────────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx_certs:/etc/nginx/certs:ro
+    depends_on:
+      - web
+      - api
+    networks:
+      - public
+    healthcheck:
+      test: ['CMD', 'nginx', '-t']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ─── Next.js frontend ─────────────────────────────────────────────────────────
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: ../../infra/docker/web.Dockerfile
+    restart: unless-stopped
+    env_file: ./apps/web/.env
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:3001
+      - NEXT_PUBLIC_WS_URL=http://api:3001
+    depends_on:
+      - api
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ─── NestJS API ───────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: ../../infra/docker/api.Dockerfile
+    restart: unless-stopped
+    env_file: ./apps/api/.env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://nexacrm:${POSTGRES_PASSWORD:-nexacrm_secret}@postgres:5432/nexacrm
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Bull queue worker ────────────────────────────────────────────────────────
+  worker:
+    build:
+      context: ./apps/api
+      dockerfile: ../../infra/docker/worker.Dockerfile
+    restart: unless-stopped
+    env_file: ./apps/api/.env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://nexacrm:${POSTGRES_PASSWORD:-nexacrm_secret}@postgres:5432/nexacrm
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+
+  # ─── PostgreSQL ───────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nexacrm
+      POSTGRES_USER: nexacrm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nexacrm_secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U nexacrm -d nexacrm']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis ────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ─── MinIO (S3-compatible, dev/staging only) ──────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ':9001'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-nexacrm}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-nexacrm_secret}
+    volumes:
+      - minio_data:/data
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - internal
+    profiles:
+      - dev
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  nginx_certs:
+
+networks:
+  public:
+    driver: bridge
+  internal:
+    driver: bridge
+    internal: false

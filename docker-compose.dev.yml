@@ -1,0 +1,14 @@
+version: '3.9'
+
+# Development override — mounts source code for hot reload
+services:
+  postgres:
+    ports:
+      - '5432:5432'
+
+  redis:
+    ports:
+      - '6379:6379'
+
+  minio:
+    profiles: []   # enable minio in dev
