@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "prebuild": "node -e \"['tsconfig.tsbuildinfo','tsconfig.build.tsbuildinfo'].forEach(f=>{try{require('fs').unlinkSync(f)}catch{}})\"",
+    "prebuild": "node -e \"['tsconfig.tsbuildinfo','tsconfig.build.tsbuildinfo'].forEach(f=>{try{require('fs').unlinkSync(f)}catch{}})\" && prisma generate",
     "build": "nest build",
     "start": "node dist/main",
     "start:dev": "nest start --watch",
