@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
@@ -82,8 +82,15 @@ export class StorageService {
 
   /**
    * Generates a pre-signed GET URL for reading a file (1 hour TTL).
+   * Validates that the file belongs to the workspace.
    */
-  async getSignedUrl(fileKey: string, expiresIn = 3600): Promise<string> {
+  async getSignedUrl(
+    workspaceId: string,
+    fileKey: string,
+    expiresIn = 3600,
+  ): Promise<string> {
+    this.validateFileAccess(workspaceId, fileKey);
+
     const command = new GetObjectCommand({
       Bucket: this.bucket,
       Key: fileKey,
@@ -94,7 +101,14 @@ export class StorageService {
   /**
    * Uploads a file buffer directly (used for small internal files like logos).
    */
-  async uploadFile(fileKey: string, buffer: Buffer, mimeType: string): Promise<string> {
+  async uploadFile(
+    workspaceId: string,
+    fileKey: string,
+    buffer: Buffer,
+    mimeType: string,
+  ): Promise<string> {
+    this.validateFileAccess(workspaceId, fileKey);
+
     const command = new PutObjectCommand({
       Bucket: this.bucket,
       Key: fileKey,
@@ -107,9 +121,27 @@ export class StorageService {
 
   /**
    * Deletes a file from S3.
+   * Validates that the file belongs to the workspace.
    */
-  async deleteFile(fileKey: string): Promise<void> {
+  async deleteFile(workspaceId: string, fileKey: string): Promise<void> {
+    this.validateFileAccess(workspaceId, fileKey);
+
     const command = new DeleteObjectCommand({ Bucket: this.bucket, Key: fileKey });
     await this.s3.send(command);
+  }
+
+  /**
+   * Validates that a file key belongs to the workspace and contains no path traversal.
+   */
+  private validateFileAccess(workspaceId: string, fileKey: string): void {
+    const normalizedKey = fileKey.replace(/\\/g, '/');
+
+    if (normalizedKey.includes('..')) {
+      throw new BadRequestException('Path traversal detected');
+    }
+
+    if (!normalizedKey.startsWith(`uploads/${workspaceId}/`)) {
+      throw new ForbiddenException('Access denied: file does not belong to workspace');
+    }
   }
 }

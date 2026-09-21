@@ -65,11 +65,12 @@ export class WorkspaceController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const fileKey = await this.storageService.uploadFile(
+      id,
       `workspaces/${id}/logo/${Date.now()}-${file.originalname}`,
       file.buffer,
       file.mimetype,
     );
-    const logoUrl = await this.storageService.getSignedUrl(fileKey);
+    const logoUrl = await this.storageService.getSignedUrl(id, fileKey);
     return this.workspaceService.updateLogo(id, logoUrl);
   }
 

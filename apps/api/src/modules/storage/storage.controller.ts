@@ -53,8 +53,21 @@ export class StorageController {
   @Get('url/*fileKey')
   @Redirect()
   @ApiOperation({ summary: 'Redirect to a pre-signed S3 GET URL' })
-  async getUrl(@Param('fileKey') fileKey: string) {
-    const url = await this.storageService.getSignedUrl(fileKey);
+  async getUrl(
+    @WorkspaceId() workspaceId: string,
+    @Param('fileKey') fileKey: string,
+  ) {
+    const url = await this.storageService.getSignedUrl(workspaceId, fileKey);
     return { url, statusCode: 302 };
+  }
+
+  @Post('delete')
+  @ApiOperation({ summary: 'Delete a file from storage' })
+  async deleteFile(
+    @WorkspaceId() workspaceId: string,
+    @Body() body: { fileKey: string },
+  ) {
+    await this.storageService.deleteFile(workspaceId, body.fileKey);
+    return { success: true };
   }
 }
