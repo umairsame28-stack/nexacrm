@@ -29,8 +29,8 @@ interface Connection {
 
 export function CRMNetworkBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationFrameRef = useRef<number>();
-  const timeRef = useRef(0);
+  const animationFrameRef = useRef<number | undefined>(undefined);
+  const timeRef = useRef<number>(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
