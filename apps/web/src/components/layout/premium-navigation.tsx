@@ -341,7 +341,7 @@ export function PremiumNavigation() {
         </div>
 
         {/* Right: Search + Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Search */}
           <div className="hidden md:block">
             <div className={cn(
@@ -358,7 +358,7 @@ export function PremiumNavigation() {
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
                 className={cn(
-                  "w-48 xl:w-64 h-9 pl-10 pr-14 rounded-lg border transition-all duration-200",
+                  "w-32 md:w-40 lg:w-48 xl:w-64 h-9 pl-10 pr-3 xl:pr-14 rounded-lg border transition-all duration-200",
                   "text-sm placeholder:text-muted-foreground",
                   "focus:outline-none focus:ring-2 focus:ring-primary/20",
                   searchFocused 
@@ -376,10 +376,10 @@ export function PremiumNavigation() {
           <div ref={quickRef} className="relative">
             <button
               onClick={() => setQuickActionsOpen(!quickActionsOpen)}
-              className="flex h-9 items-center gap-2 px-3 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium shadow-sm hover:shadow-md transition-all duration-150"
+              className="flex h-9 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium shadow-sm hover:shadow-md transition-all duration-150"
             >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">New</span>
+              <Plus className="h-4 w-4 flex-shrink-0" />
+              <span className="hidden sm:inline whitespace-nowrap">New</span>
             </button>
           </div>
 
