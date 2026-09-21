@@ -100,12 +100,17 @@ export function LeadSheet({ leadId, createOpen, onClose, onCloseCreate }: Props)
   };
 
   async function onSubmit(data: Form) {
-    if (leadId) {
-      await updateLead.mutateAsync(data);
-      onClose();
-    } else {
-      await createLead.mutateAsync(data);
-      onCloseCreate();
+    try {
+      if (leadId) {
+        await updateLead.mutateAsync(data);
+        onClose();
+      } else {
+        await createLead.mutateAsync(data);
+        onCloseCreate();
+      }
+    } catch (error: any) {
+      console.error('Lead submission error:', error);
+      // Error toast is already shown by the mutation
     }
   }
 
@@ -145,13 +150,15 @@ export function LeadSheet({ leadId, createOpen, onClose, onCloseCreate }: Props)
               <select
                 {...register('contactId')}
                 onChange={(e) => {
-                  setValue('contactId', e.target.value, { shouldValidate: true });
-                  // Auto-fill title if empty
-                  if (!watch('title')) {
-                    const selectedContact = contacts.find(c => c.id === e.target.value);
-                    if (selectedContact) {
-                      setValue('title', `Lead from ${selectedContact.firstName} ${selectedContact.lastName || ''}`.trim());
-                    }
+                  const contactId = e.target.value;
+                  setValue('contactId', contactId, { shouldValidate: true });
+                  
+                  // Auto-fill title if empty or if it's the default auto-generated title
+                  const currentTitle = watch('title');
+                  const selectedContact = contacts.find(c => c.id === contactId);
+                  
+                  if (selectedContact && (!currentTitle || currentTitle.startsWith('Lead from '))) {
+                    setValue('title', `Lead from ${selectedContact.firstName} ${selectedContact.lastName || ''}`.trim());
                   }
                 }}
                 className={`${selectClass} pl-9`}
