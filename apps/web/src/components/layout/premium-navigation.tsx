@@ -106,6 +106,7 @@ export function PremiumNavigation() {
   const [quickActionsOpen, setQuickActionsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
@@ -355,6 +356,13 @@ export function PremiumNavigation() {
               <input
                 type="text"
                 placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchQuery.trim()) {
+                    router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                  }
+                }}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
                 className={cn(
@@ -381,6 +389,54 @@ export function PremiumNavigation() {
               <Plus className="h-4 w-4 flex-shrink-0" />
               <span className="hidden sm:inline whitespace-nowrap">New</span>
             </button>
+
+            {/* Quick Actions Dropdown */}
+            {quickActionsOpen && (
+              <div className="absolute right-0 top-12 w-56 rounded-xl border border-border bg-card shadow-premium-xl animate-scale-in z-50">
+                <div className="p-2 space-y-1">
+                  <Link
+                    href="/contacts?create=true"
+                    onClick={() => setQuickActionsOpen(false)}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-foreground hover:bg-muted transition-colors group"
+                  >
+                    <User className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                    <span className="flex-1 font-medium">New Contact</span>
+                  </Link>
+                  <Link
+                    href="/leads?create=true"
+                    onClick={() => setQuickActionsOpen(false)}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-foreground hover:bg-muted transition-colors group"
+                  >
+                    <Lightbulb className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                    <span className="flex-1 font-medium">New Lead</span>
+                  </Link>
+                  <Link
+                    href="/deals?create=true"
+                    onClick={() => setQuickActionsOpen(false)}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-foreground hover:bg-muted transition-colors group"
+                  >
+                    <Briefcase className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                    <span className="flex-1 font-medium">New Deal</span>
+                  </Link>
+                  <Link
+                    href="/tasks?create=true"
+                    onClick={() => setQuickActionsOpen(false)}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-foreground hover:bg-muted transition-colors group"
+                  >
+                    <CheckSquare className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                    <span className="flex-1 font-medium">New Task</span>
+                  </Link>
+                  <Link
+                    href="/calendar?create=true"
+                    onClick={() => setQuickActionsOpen(false)}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-foreground hover:bg-muted transition-colors group"
+                  >
+                    <Calendar className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                    <span className="flex-1 font-medium">Schedule Meeting</span>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Theme Toggle */}
