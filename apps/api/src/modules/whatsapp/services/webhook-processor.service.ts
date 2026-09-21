@@ -128,43 +128,35 @@ export class WebhookProcessorService {
     phoneNumberId: string,
     msg: MetaWebhookMessage,
   ): Promise<void> {
-    this.logger.log(`📩 Processing message ${msg.id} from ${msg.from}`);
-    
     const existing = await this.prisma.message.findUnique({ where: { whatsappMsgId: msg.id } });
     if (existing) {
-      this.logger.debug(`⏭️ Duplicate message ignored: ${msg.id}`);
+      this.logger.debug({ event: 'duplicate_message_ignored', messageId: msg.id });
       return;
     }
 
     const phone = normalizePhone(msg.from);
     if (!phone) {
-      this.logger.warn(`⚠️ Invalid phone number from Meta: ${msg.from}`);
+      this.logger.warn({ event: 'invalid_phone_number', rawPhone: msg.from });
       return;
     }
 
-    this.logger.log(`👤 Creating/updating contact for phone: ${phone}`);
     const contact = await this.prisma.contact.upsert({
       where: { workspaceId_phone: { workspaceId, phone } },
       create: { workspaceId, phone, firstName: phone, source: 'WHATSAPP' },
       update: {},
     });
-    this.logger.log(`✅ Contact ID: ${contact.id}`);
 
-    this.logger.log(`💬 Creating/updating conversation...`);
     const conversation = await this.conversationsService.upsertForContact(
       workspaceId,
       contact.id,
       phoneNumberId,
     );
-    this.logger.log(`✅ Conversation ID: ${conversation.id}`);
 
     const { type, body, mediaUrl, mediaMimeType, mediaCaption, mediaFileName } =
       this.extractMessageContent(msg);
 
-    // Serialize the raw webhook message as a plain JSON-safe object for Prisma
     const metadata: Prisma.InputJsonValue = { raw: msg as unknown as Prisma.InputJsonValue };
 
-    this.logger.log(`💾 Saving message to database (type: ${type})...`);
     const message = await this.prisma.message.create({
       data: {
         conversationId: conversation.id,
@@ -185,9 +177,7 @@ export class WebhookProcessorService {
         sender: { select: { id: true, firstName: true, lastName: true } },
       },
     });
-    this.logger.log(`✅ Message saved with ID: ${message.id}`);
 
-    this.logger.log(`🔄 Updating conversation metadata...`);
     await this.prisma.conversation.update({
       where: { id: conversation.id },
       data: {
@@ -198,7 +188,6 @@ export class WebhookProcessorService {
       },
     });
 
-    this.logger.log(`🔌 Emitting WebSocket event to workspace ${workspaceId}...`);
     this.gateway.emitToWorkspace(workspaceId, 'message:new', message);
     
     this.eventEmitter.emit('whatsapp.message_received', {
@@ -208,7 +197,13 @@ export class WebhookProcessorService {
       messageId: message.id,
     });
 
-    this.logger.log(`✅ ✅ ✅ Successfully processed inbound message from ${phone} → conversation ${conversation.id}`);
+    this.logger.log({
+      event: 'inbound_message_processed',
+      workspaceId,
+      conversationId: conversation.id,
+      messageId: message.id,
+      messageType: type,
+    });
   }
 
   private extractMessageContent(msg: MetaWebhookMessage): {
