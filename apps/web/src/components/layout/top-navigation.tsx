@@ -242,8 +242,8 @@ export function TopNavigation() {
       </div>
 
       {/* Right: Search + Actions + User */}
-      <div className="flex items-center gap-2">
-        {/* Search - hidden on small screens */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Search - hidden on small screens, compact on medium */}
         <div className="hidden md:block">
           <div className={cn(
             "relative group transition-all duration-200",
@@ -261,7 +261,7 @@ export function TopNavigation() {
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
               className={cn(
-                "w-48 xl:w-64 h-9 pl-10 pr-14 rounded-lg border transition-all duration-200",
+                "w-32 md:w-40 lg:w-48 xl:w-64 h-9 pl-10 pr-3 xl:pr-14 rounded-lg border transition-all duration-200",
                 "text-sm text-foreground placeholder:text-muted-foreground",
                 "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
                 searchFocused 
@@ -269,8 +269,8 @@ export function TopNavigation() {
                   : "border-border bg-muted/30 hover:bg-card hover:border-border"
               )}
             />
-            <div className="absolute inset-y-0 right-3 flex items-center gap-1 pointer-events-none">
-              <kbd className="hidden xl:inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <div className="absolute inset-y-0 right-3 hidden xl:flex items-center gap-1 pointer-events-none">
+              <kbd className="inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
                 <Command className="h-3 w-3" />K
               </kbd>
             </div>
@@ -289,10 +289,10 @@ export function TopNavigation() {
         <div ref={quickRef} className="relative">
           <button
             onClick={() => setQuickActionsOpen(!quickActionsOpen)}
-            className="flex h-9 items-center gap-2 px-3 rounded-lg bg-gradient-to-r from-primary to-accent text-white text-sm font-medium shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200 group"
+            className="flex h-9 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 rounded-lg bg-gradient-to-r from-primary to-accent text-white text-sm font-medium shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200 group"
           >
-            <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-200" />
-            <span className="hidden sm:inline">New</span>
+            <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-200 flex-shrink-0" />
+            <span className="hidden sm:inline whitespace-nowrap">New</span>
           </button>
 
           {quickActionsOpen && (
