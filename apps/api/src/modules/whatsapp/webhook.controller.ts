@@ -47,17 +47,22 @@ export class WebhookController {
       return res.status(403).send('Invalid mode');
     }
 
-    // Find workspace by verify token
     const settings = await this.prisma.workspaceSettings.findFirst({
       where: { wabVerifyToken: verifyToken },
     });
 
     if (!settings) {
-      this.logger.warn(`Webhook verification failed: no workspace with verify token ${verifyToken}`);
+      this.logger.warn({
+        event: 'webhook_verification_failed',
+        reason: 'no_workspace_found',
+      });
       return res.status(403).send('Invalid verify token');
     }
 
-    this.logger.log(`Webhook verified for workspace ${settings.workspaceId}`);
+    this.logger.log({
+      event: 'webhook_verified',
+      workspaceId: settings.workspaceId,
+    });
     return res.status(200).send(challenge);
   }
 
@@ -73,81 +78,121 @@ export class WebhookController {
     @Req() req: Request,
     @Body() body: Record<string, unknown>,
   ) {
-    this.logger.log(`📥 Webhook POST received from ${req.ip}`);
-    this.logger.debug(`Webhook payload: ${JSON.stringify(body).substring(0, 500)}...`);
-
-    // Validate HMAC signature
     const signature = req.headers['x-hub-signature-256'] as string;
     if (!signature) {
-      this.logger.error('❌ Missing X-Hub-Signature-256 header');
+      this.logger.error({ event: 'webhook_rejected', reason: 'missing_signature' });
       throw new ForbiddenException('Missing X-Hub-Signature-256 header');
     }
 
-    this.logger.log('🔐 Verifying HMAC signature...');
-    const isValid = await this.verifyHmacSignature(body, signature);
+    const phoneNumberId = this.extractPhoneNumberId(body);
+    if (!phoneNumberId) {
+      this.logger.error({ event: 'webhook_rejected', reason: 'missing_phone_number_id' });
+      throw new ForbiddenException('Invalid webhook payload: missing phone_number_id');
+    }
+
+    const isValid = await this.verifyHmacSignature(req, phoneNumberId, signature);
     if (!isValid) {
-      this.logger.error('❌ Invalid webhook signature');
+      this.logger.error({
+        event: 'webhook_rejected',
+        reason: 'invalid_signature',
+        phoneNumberId,
+      });
       throw new ForbiddenException('Invalid webhook signature');
     }
 
-    this.logger.log('✅ Signature verified, processing webhook...');
+    this.logger.log({
+      event: 'webhook_received',
+      phoneNumberId,
+      ip: req.ip,
+    });
 
-    // Process asynchronously — always return 200 immediately to Meta
     this.webhookProcessor.processWebhook(body).catch((err) => {
-      this.logger.error(`❌ Webhook processing error: ${String(err)}`);
+      this.logger.error({
+        event: 'webhook_processing_error',
+        phoneNumberId,
+        error: err instanceof Error ? err.message : String(err),
+      });
     });
 
     return { status: 'ok' };
   }
 
+  private extractPhoneNumberId(body: Record<string, unknown>): string | null {
+    const entry = (body.entry as unknown[])?.[0] as Record<string, unknown>;
+    if (!entry) return null;
+
+    const changes = (entry.changes as unknown[])?.[0] as Record<string, unknown>;
+    if (!changes) return null;
+
+    const value = changes.value as Record<string, unknown>;
+    if (!value) return null;
+
+    const metadata = value.metadata as Record<string, string> | undefined;
+    return metadata?.phone_number_id ?? null;
+  }
+
   private async verifyHmacSignature(
-    body: Record<string, unknown>,
+    req: Request,
+    phoneNumberId: string,
     signature: string,
   ): Promise<boolean> {
     try {
-      // Find the first workspace with a webhook secret to verify
-      // In production each webhook URL is workspace-specific
-      const allSettings = await this.prisma.workspaceSettings.findMany({
-        where: { wabWebhookSecret: { not: null } },
+      const settings = await this.prisma.workspaceSettings.findFirst({
+        where: { wabPhoneNumberId: phoneNumberId },
         select: { wabWebhookSecret: true, workspaceId: true },
-        take: 10,
       });
 
-      this.logger.log(`🔍 Found ${allSettings.length} workspace(s) with webhook secret configured`);
-
-      const rawBody = JSON.stringify(body);
-      const expectedPrefix = 'sha256=';
-
-      if (!signature.startsWith(expectedPrefix)) {
-        this.logger.error('❌ Signature does not start with sha256=');
+      if (!settings?.wabWebhookSecret) {
+        this.logger.warn({
+          event: 'webhook_verification_failed',
+          reason: 'no_webhook_secret',
+          phoneNumberId,
+        });
         return false;
       }
-      const providedHash = signature.slice(expectedPrefix.length);
 
-      for (const settings of allSettings) {
-        if (!settings.wabWebhookSecret) continue;
-        const secret = this.crypto.decrypt(settings.wabWebhookSecret);
-        const computedHash = createHmac('sha256', secret)
-          .update(rawBody)
-          .digest('hex');
-
-        try {
-          const matches = timingSafeEqual(
-            Buffer.from(computedHash, 'hex'),
-            Buffer.from(providedHash, 'hex'),
-          );
-          if (matches) {
-            this.logger.log(`✅ Signature matched for workspace ${settings.workspaceId}`);
-            return true;
-          }
-        } catch {
-          continue;
-        }
+      const expectedPrefix = 'sha256=';
+      if (!signature.startsWith(expectedPrefix)) {
+        return false;
       }
-      this.logger.error('❌ Signature did not match any workspace');
-      return false;
+
+      const providedHash = signature.slice(expectedPrefix.length);
+      const secret = this.crypto.decrypt(settings.wabWebhookSecret);
+
+      const rawBody = (req as any).rawBody;
+      if (!rawBody || !Buffer.isBuffer(rawBody)) {
+        this.logger.error({
+          event: 'webhook_verification_failed',
+          reason: 'missing_raw_body',
+          phoneNumberId,
+        });
+        return false;
+      }
+
+      const computedHash = createHmac('sha256', secret)
+        .update(rawBody)
+        .digest('hex');
+
+      const matches = timingSafeEqual(
+        Buffer.from(computedHash, 'hex'),
+        Buffer.from(providedHash, 'hex'),
+      );
+
+      if (matches) {
+        this.logger.log({
+          event: 'webhook_signature_verified',
+          workspaceId: settings.workspaceId,
+          phoneNumberId,
+        });
+      }
+
+      return matches;
     } catch (err) {
-      this.logger.error(`❌ HMAC verification error: ${String(err)}`);
+      this.logger.error({
+        event: 'webhook_verification_error',
+        phoneNumberId,
+        error: err instanceof Error ? err.message : String(err),
+      });
       return false;
     }
   }

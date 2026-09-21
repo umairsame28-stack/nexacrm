@@ -28,6 +28,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({ instance: logger }),
     bufferLogs: true,
+    rawBody: true,
   });
 
   const config = app.get(ConfigService);

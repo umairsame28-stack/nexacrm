@@ -43,23 +43,21 @@ export class WebhookProcessorService {
   ) {}
 
   async processWebhook(payload: Record<string, unknown>): Promise<void> {
-    this.logger.log('🔄 Starting webhook processing...');
-    
     const entry = (payload.entry as unknown[])?.[0] as Record<string, unknown>;
     if (!entry) {
-      this.logger.warn('⚠️ No entry found in webhook payload');
+      this.logger.warn({ event: 'webhook_processing_skipped', reason: 'no_entry' });
       return;
     }
 
     const changes = (entry.changes as unknown[])?.[0] as Record<string, unknown>;
     if (!changes) {
-      this.logger.warn('⚠️ No changes found in webhook entry');
+      this.logger.warn({ event: 'webhook_processing_skipped', reason: 'no_changes' });
       return;
     }
 
     const value = changes.value as Record<string, unknown>;
     if (!value) {
-      this.logger.warn('⚠️ No value found in webhook changes');
+      this.logger.warn({ event: 'webhook_processing_skipped', reason: 'no_value' });
       return;
     }
 
@@ -68,45 +66,60 @@ export class WebhookProcessorService {
       : undefined;
 
     if (!phoneNumberId) {
-      this.logger.warn('⚠️ No phone_number_id found in webhook metadata');
+      this.logger.warn({ event: 'webhook_processing_skipped', reason: 'no_phone_number_id' });
       return;
     }
-
-    this.logger.log(`📞 Phone Number ID: ${phoneNumberId}`);
 
     const settings = await this.prisma.workspaceSettings.findFirst({
       where: { wabPhoneNumberId: phoneNumberId },
     });
     if (!settings) {
-      this.logger.error(`❌ No workspace found for phone number ID: ${phoneNumberId}`);
-      this.logger.error('💡 Make sure you have saved your WhatsApp credentials with this Phone Number ID');
+      this.logger.error({
+        event: 'webhook_processing_failed',
+        reason: 'workspace_not_found',
+        phoneNumberId,
+      });
       return;
     }
 
-    this.logger.log(`✅ Found workspace: ${settings.workspaceId}`);
-
     const messages = value.messages as MetaWebhookMessage[] | undefined;
     if (messages?.length) {
-      this.logger.log(`📨 Processing ${messages.length} inbound message(s)...`);
+      this.logger.log({
+        event: 'processing_inbound_messages',
+        workspaceId: settings.workspaceId,
+        messageCount: messages.length,
+      });
       for (const msg of messages) {
         await this.processInboundMessage(settings.workspaceId, phoneNumberId, msg).catch((err) => {
-          this.logger.error(`❌ Error processing message ${msg.id}: ${String(err)}`);
+          this.logger.error({
+            event: 'message_processing_failed',
+            messageId: msg.id,
+            error: err instanceof Error ? err.message : String(err),
+          });
         });
       }
     }
 
     const statuses = value.statuses as MetaWebhookStatus[] | undefined;
     if (statuses?.length) {
-      this.logger.log(`📊 Processing ${statuses.length} status update(s)...`);
+      this.logger.log({
+        event: 'processing_status_updates',
+        workspaceId: settings.workspaceId,
+        statusCount: statuses.length,
+      });
       for (const status of statuses) {
         await this.processStatusUpdate(settings.workspaceId, status).catch((err) => {
-          this.logger.error(`❌ Error processing status update ${status.id}: ${String(err)}`);
+          this.logger.error({
+            event: 'status_update_failed',
+            statusId: status.id,
+            error: err instanceof Error ? err.message : String(err),
+          });
         });
       }
     }
 
     if (!messages?.length && !statuses?.length) {
-      this.logger.warn('⚠️ Webhook contained no messages or statuses to process');
+      this.logger.warn({ event: 'webhook_empty', workspaceId: settings.workspaceId });
     }
   }
 
