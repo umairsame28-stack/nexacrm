@@ -19,6 +19,7 @@ import { apiClient } from '@/lib/api-client';
 import { formatRelative } from '@/lib/format';
 import { useState, useRef, useEffect } from 'react';
 import { disconnectSocket } from '@/lib/socket-client';
+import { GlobalSearch } from '@/components/search/global-search';
 
 type MegaMenuType = 'platform' | 'solutions' | 'resources' | null;
 
@@ -107,6 +108,7 @@ export function PremiumNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
   
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
@@ -143,6 +145,11 @@ export function PremiumNavigation() {
         setUserMenuOpen(false);
         setQuickActionsOpen(false);
         setMobileMenuOpen(false);
+      }
+      // Cmd+K or Ctrl+K for search
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
       }
     }
     
@@ -358,15 +365,15 @@ export function PremiumNavigation() {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && searchQuery.trim()) {
-                    router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-                  }
+                onFocus={() => {
+                  setSearchFocused(true);
+                  setSearchOpen(true);
                 }}
-                onFocus={() => setSearchFocused(true)}
+                onClick={() => setSearchOpen(true)}
                 onBlur={() => setSearchFocused(false)}
+                readOnly
                 className={cn(
-                  "w-32 md:w-40 lg:w-48 xl:w-64 h-9 pl-10 pr-3 xl:pr-14 rounded-lg border transition-all duration-200",
+                  "w-32 md:w-40 lg:w-48 xl:w-64 h-9 pl-10 pr-3 xl:pr-14 rounded-lg border transition-all duration-200 cursor-pointer",
                   "text-sm placeholder:text-muted-foreground",
                   "focus:outline-none focus:ring-2 focus:ring-primary/20",
                   searchFocused 
@@ -668,6 +675,9 @@ export function PremiumNavigation() {
           </div>
         </div>
       )}
+
+      {/* Global Search Modal */}
+      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }
