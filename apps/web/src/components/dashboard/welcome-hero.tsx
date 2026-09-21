@@ -4,6 +4,7 @@ import { ArrowUpRight, TrendingUp, Users, Plus, Upload, Calendar } from 'lucide-
 import { useRouter } from 'next/navigation';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { CRMNetworkBackground } from './crm-network-background';
 
 interface WelcomeHeroProps {
   userName: string;
@@ -19,6 +20,9 @@ export function WelcomeHero({ userName, greeting, revenue, revenueChange, totalC
 
   return (
     <div className="relative overflow-hidden rounded-2xl border p-8 shadow-premium-lg bg-gradient-to-br from-background to-muted/30">
+      {/* CRM Network Background - Subtle animated background */}
+      <CRMNetworkBackground />
+      
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/5 to-accent/5 rounded-full blur-3xl -z-0 animate-pulse-subtle" />
       <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-gradient-to-tr from-accent/5 to-primary/5 rounded-full blur-3xl -z-0" style={{ animationDelay: '1s' }} />
