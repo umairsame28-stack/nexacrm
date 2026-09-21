@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { X, Loader2, AlertCircle } from 'lucide-react';
+import { X, Loader2, AlertCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLead, useCreateLead, useUpdateLead, usePipelines } from '@/queries/leads.queries';
+import { useContacts } from '@/queries/contacts.queries';
 
 const schema = z.object({
   title: z.string().min(1, 'Required'),
@@ -37,6 +38,11 @@ export function LeadSheet({ leadId, createOpen, onClose, onCloseCreate }: Props)
   const { data: pipelines, isLoading: pipelinesLoading, isError: pipelinesError } = usePipelines();
   const createLead = useCreateLead();
   const updateLead = useUpdateLead(leadId ?? '');
+  
+  // Contact search state
+  const [contactSearch, setContactSearch] = useState('');
+  const { data: contactsData } = useContacts({ search: contactSearch || undefined, limit: 20 });
+  const contacts = contactsData?.data ?? [];
 
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm<Form>({
     resolver: zodResolver(schema),
@@ -133,11 +139,37 @@ export function LeadSheet({ leadId, createOpen, onClose, onCloseCreate }: Props)
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1.5">Contact ID *</label>
-            <Input {...register('contactId')} placeholder="Paste contact UUID here" />
+            <label className="block text-sm font-medium text-foreground mb-1.5">Contact *</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 pointer-events-none" />
+              <select
+                {...register('contactId')}
+                onChange={(e) => {
+                  setValue('contactId', e.target.value, { shouldValidate: true });
+                  // Auto-fill title if empty
+                  if (!watch('title')) {
+                    const selectedContact = contacts.find(c => c.id === e.target.value);
+                    if (selectedContact) {
+                      setValue('title', `Lead from ${selectedContact.firstName} ${selectedContact.lastName || ''}`.trim());
+                    }
+                  }
+                }}
+                className={`${selectClass} pl-9`}
+              >
+                <option value="">Select contact...</option>
+                {contacts.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.firstName} {c.lastName || ''} {c.email ? `(${c.email})` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
             {errors.contactId && (
               <p className="mt-1 text-xs text-destructive">{errors.contactId.message}</p>
             )}
+            <p className="mt-1 text-xs text-muted-foreground">
+              Don't see your contact? <button type="button" onClick={() => window.open('/contacts', '_blank')} className="text-primary hover:underline">Create one first</button>
+            </p>
           </div>
 
           {/* Pipeline */}
