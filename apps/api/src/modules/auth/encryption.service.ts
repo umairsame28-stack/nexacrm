@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes, pbkdf2Sync } from 'crypto';
 
 @Injectable()
 export class EncryptionService {
@@ -16,11 +16,17 @@ export class EncryptionService {
       );
     }
 
-    // Derive a 32-byte key using scrypt for AES-256
-    // Using a fixed salt here for deterministic key derivation from the same secret
-    // In production, consider using the encryptionKey directly if it's already 32 bytes
-    const salt = 'nexacrm-totp-salt'; // Fixed salt for key derivation
-    this.key = scryptSync(encryptionKey, salt, 32);
+    // Validate key length for AES-256
+    if (encryptionKey.length < 32) {
+      throw new InternalServerErrorException(
+        'ENCRYPTION_KEY must be at least 32 characters for AES-256 encryption.',
+      );
+    }
+
+    // Use PBKDF2 for better key derivation (more secure than scrypt for this use case)
+    // 100,000 iterations is OWASP recommended minimum
+    const salt = 'nexacrm-totp-encryption-v1'; // Version the salt for key rotation
+    this.key = pbkdf2Sync(encryptionKey, salt, 100000, 32, 'sha256');
   }
 
   /**

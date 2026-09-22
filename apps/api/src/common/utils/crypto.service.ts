@@ -12,11 +12,16 @@ export class CryptoService {
   private readonly secret: string;
 
   constructor(config: ConfigService) {
-    const key = config.get<string>('app.encryptionKey') ?? process.env.APP_ENCRYPTION_KEY ?? '';
+    const key = config.get<string>('app.encryptionKey');
     if (!key) {
       throw new Error(
-        'APP_ENCRYPTION_KEY is not set. ' +
-        'Run: openssl rand -hex 16 and set the result as APP_ENCRYPTION_KEY.',
+        'APP_ENCRYPTION_KEY is not configured. This should be caught by security.config.ts validation. ' +
+        'Ensure APP_ENCRYPTION_KEY is set and app.module.ts loads securityConfig.',
+      );
+    }
+    if (key.length < 32) {
+      throw new Error(
+        `APP_ENCRYPTION_KEY must be at least 32 characters for AES-256. Current length: ${key.length}`,
       );
     }
     this.secret = key;

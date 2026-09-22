@@ -8,6 +8,7 @@ import databaseConfig from './config/database.config';
 import redisConfig from './config/redis.config';
 import jwtConfig from './config/jwt.config';
 import s3Config from './config/s3.config';
+import securityConfig from './config/security.config';
 import { PrismaModule } from './prisma/prisma.module';
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -34,7 +35,7 @@ import { WebsocketModule } from './websocket/websocket.module';
     // Configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, redisConfig, jwtConfig, s3Config],
+      load: [appConfig, databaseConfig, redisConfig, jwtConfig, s3Config, securityConfig],
       envFilePath: ['.env.local', '.env'],
     }),
 

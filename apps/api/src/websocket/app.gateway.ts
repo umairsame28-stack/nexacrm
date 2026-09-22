@@ -56,7 +56,10 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       }
 
       try {
-        const secret = this.config.get<string>('jwt.accessSecret', 'dev-secret');
+        const secret = this.config.get<string>('jwt.accessSecret');
+        if (!secret) {
+          throw new Error('JWT secret not configured');
+        }
         const payload = this.jwtService.verify<SocketUser & { sub: string }>(token, { secret });
         socket.user = {
           id: payload.sub,

@@ -7,9 +7,13 @@ import { AppGateway } from './app.gateway';
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('jwt.accessSecret', 'dev-secret'),
-      }),
+      useFactory: (config: ConfigService) => {
+        const secret = config.get<string>('jwt.accessSecret');
+        if (!secret) {
+          throw new Error('JWT_ACCESS_SECRET not configured for WebSocket authentication');
+        }
+        return { secret };
+      },
       inject: [ConfigService],
     }),
   ],

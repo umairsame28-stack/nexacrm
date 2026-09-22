@@ -21,13 +21,18 @@ import { NotificationsModule } from '../notifications/notifications.module';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        // Dynamic signing handled in TokenService; JwtModule just provides the service
-        secret: config.get<string>('jwt.accessSecret', 'dev-secret'),
-        signOptions: {
-          expiresIn: (config.get<string>('jwt.accessExpiry', '15m')) as unknown as number,
-        },
-      }),
+      useFactory: (config: ConfigService) => {
+        const secret = config.get<string>('jwt.accessSecret');
+        if (!secret) {
+          throw new Error('JWT_ACCESS_SECRET not configured');
+        }
+        return {
+          secret,
+          signOptions: {
+            expiresIn: (config.get<string>('jwt.accessExpiry', '15m')) as unknown as number,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],
