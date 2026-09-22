@@ -109,18 +109,6 @@ export class AuthService {
     });
     const refreshToken = await this.tokenService.generateRefreshToken(user.id, ipAddress, userAgent);
 
-    // Audit log
-    await this.prisma.auditLog.create({
-      data: {
-        workspaceId: workspace.id,
-        userId: user.id,
-        action: 'LOGIN',
-        resource: 'auth',
-        ipAddress,
-        userAgent,
-      },
-    });
-
     this.eventEmitter.emit('user.registered', { userId: user.id, workspaceId: workspace.id });
 
     return {
@@ -158,6 +146,8 @@ export class AuthService {
             workspaceId: workspace.workspaceId,
             userId: user.id,
             action: 'LOGIN_FAILED',
+            entityType: 'User',
+            entityId: user.id,
             resource: 'auth',
             ipAddress,
             userAgent,
@@ -370,6 +360,8 @@ export class AuthService {
         workspaceId,
         userId: user.id,
         action: 'SETTINGS_CHANGED',
+        entityType: 'User',
+        entityId: user.id,
         resource: 'password_reset',
         resourceId: token,
         newData: { token, expiresAt: expiresAt.toISOString() },
@@ -634,6 +626,8 @@ export class AuthService {
         workspaceId: workspace.id,
         userId: user.id,
         action: 'LOGIN',
+        entityType: 'User',
+        entityId: user.id,
         resource: 'auth',
         ipAddress,
         userAgent,

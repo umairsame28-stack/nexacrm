@@ -41,6 +41,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         firstName: true,
         lastName: true,
         status: true,
+        systemRole: true,
       },
     });
 
@@ -53,6 +54,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      systemRole: user.systemRole,
       // workspaceId and role are populated by WorkspaceGuard after JWT validation
       workspaceId: '',
       role: '',

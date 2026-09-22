@@ -9,6 +9,8 @@ export interface AuthenticatedUser {
   email: string;
   firstName: string;
   lastName: string;
+  /** System-level role: USER or SUPER_ADMIN */
+  systemRole?: 'USER' | 'SUPER_ADMIN';
   /** Populated by WorkspaceGuard from X-Workspace-ID header */
   workspaceId: string;
   /** Populated by WorkspaceGuard with the member role */

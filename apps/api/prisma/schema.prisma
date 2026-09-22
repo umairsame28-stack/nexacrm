@@ -22,6 +22,11 @@ enum UserStatus {
   SUSPENDED
 }
 
+enum SystemRole {
+  USER
+  SUPER_ADMIN
+}
+
 enum WorkspaceMemberRole {
   OWNER
   ADMINISTRATOR
@@ -223,6 +228,7 @@ model User {
   avatarUrl     String?
   phone         String?
   status        UserStatus @default(ACTIVE)
+  systemRole    SystemRole @default(USER)
   emailVerified Boolean    @default(false)
   totpSecret    String?
   totpEnabled   Boolean    @default(false)
@@ -230,18 +236,18 @@ model User {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 
-  workspaceMembers WorkspaceMember[]
-  refreshTokens    RefreshToken[]
+  workspaceMembers  WorkspaceMember[]
+  refreshTokens     RefreshToken[]
   totpRecoveryCodes TotpRecoveryCode[]
-  auditLogs        AuditLog[]
-  assignedLeads    Lead[]          @relation("LeadAssignee")
-  assignedDeals    Deal[]          @relation("DealAssignee")
-  assignedConvs    Conversation[]  @relation("ConversationAssignee")
-  tasks            Task[]          @relation("TaskAssignee")
-  createdTasks     Task[]          @relation("TaskCreator")
-  notifications    Notification[]
-  messages         Message[]       @relation("MessageSender")
-  calendarEvents   CalendarEvent[]
+  auditLogs         AuditLog[]
+  assignedLeads     Lead[]             @relation("LeadAssignee")
+  assignedDeals     Deal[]             @relation("DealAssignee")
+  assignedConvs     Conversation[]     @relation("ConversationAssignee")
+  tasks             Task[]             @relation("TaskAssignee")
+  createdTasks      Task[]             @relation("TaskCreator")
+  notifications     Notification[]
+  messages          Message[]          @relation("MessageSender")
+  calendarEvents    CalendarEvent[]
 
   @@index([email])
 }
@@ -266,17 +272,17 @@ model WorkspaceMember {
 }
 
 model RefreshToken {
-  id           String    @id @default(uuid())
-  userId       String
-  token        String?   @unique // Legacy - will be removed
-  tokenHash    String?   @unique // SHA-256 hash of token
-  familyId     String?   // For reuse detection - all rotated tokens share same familyId
-  expiresAt    DateTime
-  revokedAt    DateTime?
-  replacedBy   String?   // ID of the token that replaced this one
-  ipAddress    String?
-  userAgent    String?
-  createdAt    DateTime  @default(now())
+  id         String    @id @default(uuid())
+  userId     String
+  token      String?   @unique // Legacy - will be removed
+  tokenHash  String?   @unique // SHA-256 hash of token
+  familyId   String? // For reuse detection - all rotated tokens share same familyId
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  replacedBy String? // ID of the token that replaced this one
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -385,7 +391,7 @@ model Tag {
   color       String   @default("#94a3b8")
   createdAt   DateTime @default(now())
 
-  workspace Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   contacts  ContactTagAssignment[]
 
   @@unique([workspaceId, name])
@@ -424,7 +430,7 @@ model CustomFieldDefinition {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
-  workspace Workspace                @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   values    ContactCustomFieldValue[]
 
   @@unique([workspaceId, entityType, key])
@@ -468,7 +474,7 @@ model Contact {
   updatedAt    DateTime      @updatedAt
   deletedAt    DateTime?
 
-  workspace     Workspace                @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace     Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   customValues  ContactCustomFieldValue[]
   tags          ContactTagAssignment[]
   contactNotes  ContactNote[]
@@ -672,10 +678,10 @@ model Deal {
   updatedAt         DateTime   @updatedAt
   deletedAt         DateTime?
 
-  workspace  Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  pipeline   DealPipeline @relation(fields: [pipelineId], references: [id])
-  stage      DealStage    @relation(fields: [stageId], references: [id])
-  assignedTo User?        @relation("DealAssignee", fields: [assignedToId], references: [id])
+  workspace  Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  pipeline   DealPipeline  @relation(fields: [pipelineId], references: [id])
+  stage      DealStage     @relation(fields: [stageId], references: [id])
+  assignedTo User?         @relation("DealAssignee", fields: [assignedToId], references: [id])
   contacts   ContactDeal[]
   tasks      Task[]
   notes      DealNote[]
@@ -730,19 +736,19 @@ model DealHistory {
 // ─────────────────────────────────────────────
 
 model Conversation {
-  id                   String             @id @default(uuid())
-  workspaceId          String
-  contactId            String
-  assignedToId         String?
-  status               ConversationStatus @default(OPEN)
-  isPinned             Boolean            @default(false)
-  isArchived           Boolean            @default(false)
-  unreadCount          Int                @default(0)
-  lastMessageAt        DateTime?
-  lastMessageText      String?
+  id                    String             @id @default(uuid())
+  workspaceId           String
+  contactId             String
+  assignedToId          String?
+  status                ConversationStatus @default(OPEN)
+  isPinned              Boolean            @default(false)
+  isArchived            Boolean            @default(false)
+  unreadCount           Int                @default(0)
+  lastMessageAt         DateTime?
+  lastMessageText       String?
   whatsappPhoneNumberId String?
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
 
   workspace     Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   contact       Contact             @relation(fields: [contactId], references: [id])
@@ -857,24 +863,24 @@ model MessageTemplate {
 }
 
 model Broadcast {
-  id              String          @id @default(uuid())
-  workspaceId     String
-  name            String
-  templateId      String?
-  templateVars    Json?
-  filterCriteria  Json?
-  recipientCount  Int             @default(0)
-  sentCount       Int             @default(0)
-  failedCount     Int             @default(0)
-  status          BroadcastStatus @default(DRAFT)
-  scheduledAt     DateTime?
-  startedAt       DateTime?
-  completedAt     DateTime?
-  createdById     String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id             String          @id @default(uuid())
+  workspaceId    String
+  name           String
+  templateId     String?
+  templateVars   Json?
+  filterCriteria Json?
+  recipientCount Int             @default(0)
+  sentCount      Int             @default(0)
+  failedCount    Int             @default(0)
+  status         BroadcastStatus @default(DRAFT)
+  scheduledAt    DateTime?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdById    String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
-  workspace  Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace  Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   recipients BroadcastRecipient[]
 
   @@index([workspaceId])
@@ -932,13 +938,13 @@ model Task {
 }
 
 model CalendarEvent {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   workspaceId String
   title       String
   description String?
   startAt     DateTime
   endAt       DateTime
-  allDay      Boolean  @default(false)
+  allDay      Boolean   @default(false)
   location    String?
   color       String?
   createdById String
@@ -947,11 +953,11 @@ model CalendarEvent {
   dealId      String?
   externalId  String?
   remindAt    DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  workspace Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  createdBy User                   @relation(fields: [createdById], references: [id])
+  workspace Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdBy User                    @relation(fields: [createdById], references: [id])
   attendees CalendarEventAttendee[]
 
   @@index([workspaceId])
@@ -1036,23 +1042,27 @@ model AiUsageLog {
 
 model AuditLog {
   id          String      @id @default(uuid())
-  workspaceId String
+  workspaceId String?
   userId      String?
   action      AuditAction
-  resource    String
-  resourceId  String?
+  entityType  String // 'User', 'Workspace', etc.
+  entityId    String? // ID of the entity being acted upon
+  resource    String? // Legacy field, kept for compatibility
+  resourceId  String? // Legacy field, kept for compatibility
+  changes     Json? // Details of what changed
   oldData     Json?
   newData     Json?
   ipAddress   String?
   userAgent   String?
   createdAt   DateTime    @default(now())
 
-  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user      User?     @relation(fields: [userId], references: [id])
+  workspace Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User?      @relation(fields: [userId], references: [id])
 
   @@index([workspaceId, createdAt(sort: Desc)])
   @@index([workspaceId, userId])
   @@index([workspaceId, resource, resourceId])
+  @@index([entityType, entityId])
 }
 
 // ─────────────────────────────────────────────

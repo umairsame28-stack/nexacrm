@@ -15,6 +15,7 @@ import { CommonModule } from './common/common.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { WorkspaceGuard } from './common/guards/workspace.guard';
 import { RolesGuard } from './common/guards/roles.guard';
+import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { TeamsModule } from './modules/teams/teams.module';
@@ -95,6 +96,7 @@ import { WebsocketModule } from './websocket/websocket.module';
     WebsocketModule,
 
     // Feature modules
+    AdminModule,
     AuthModule,
     WorkspaceModule,
     TeamsModule,
