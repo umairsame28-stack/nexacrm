@@ -13,7 +13,15 @@ import { useAuthStore } from '@/stores/auth.store';
 import { Avatar } from '@/components/ui/avatar';
 import { useNotificationStore } from '@/stores/notification.store';
 
-const navItems = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  group: string;
+  badge?: 'inbox';
+}
+
+const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, group: 'main' },
   { href: '/contacts', label: 'Contacts', icon: Users, group: 'main' },
   { href: '/leads', label: 'Leads', icon: Lightbulb, group: 'main' },
@@ -26,7 +34,7 @@ const navItems = [
   { href: '/settings', label: 'Settings', icon: Settings, group: 'admin' },
 ];
 
-const superAdminItems = [
+const superAdminItems: NavItem[] = [
   { href: '/admin', label: 'Overview', icon: Shield, group: 'superadmin' },
   { href: '/admin/users', label: 'Users', icon: Users, group: 'superadmin' },
   { href: '/admin/workspaces', label: 'Workspaces', icon: Building2, group: 'superadmin' },

@@ -35,18 +35,18 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       workspace: null,
       accessToken: null,
       isAuthenticated: false,
 
-      isSuperAdmin: () => {
-        const state = useAuthStore.getState();
+      isSuperAdmin: (): boolean => {
+        const state = get();
         return state.user?.systemRole === 'SUPER_ADMIN';
       },
 
-      setAuth: (user, workspace, accessToken) => {
+      setAuth: (user: User, workspace: Workspace, accessToken: string) => {
         // Also store in localStorage for axios interceptor
         if (typeof window !== 'undefined') {
           localStorage.setItem('nexacrm_access_token', accessToken);
@@ -55,14 +55,14 @@ export const useAuthStore = create<AuthState>()(
         set({ user, workspace, accessToken, isAuthenticated: true });
       },
 
-      setAccessToken: (token) => {
+      setAccessToken: (token: string) => {
         if (typeof window !== 'undefined') {
           localStorage.setItem('nexacrm_access_token', token);
         }
         set({ accessToken: token });
       },
 
-      setWorkspace: (workspace) => {
+      setWorkspace: (workspace: Workspace) => {
         if (typeof window !== 'undefined') {
           localStorage.setItem('nexacrm_workspace_id', workspace.id);
         }
