@@ -266,19 +266,24 @@ model WorkspaceMember {
 }
 
 model RefreshToken {
-  id        String    @id @default(uuid())
-  userId    String
-  token     String    @unique
-  expiresAt DateTime
-  revokedAt DateTime?
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime  @default(now())
+  id           String    @id @default(uuid())
+  userId       String
+  token        String?   @unique // Legacy - will be removed
+  tokenHash    String?   @unique // SHA-256 hash of token
+  familyId     String?   // For reuse detection - all rotated tokens share same familyId
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  replacedBy   String?   // ID of the token that replaced this one
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([token])
+  @@index([tokenHash])
   @@index([userId])
+  @@index([familyId])
 }
 
 model TotpRecoveryCode {

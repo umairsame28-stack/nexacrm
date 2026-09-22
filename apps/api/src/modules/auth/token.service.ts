@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 import { addDays, addMinutes } from 'date-fns';
 
 interface TokenPair {
@@ -66,14 +66,32 @@ export class TokenService {
     userId: string,
     ipAddress?: string,
     userAgent?: string,
+    familyId?: string,
   ): Promise<string> {
+    // Generate random token
     const token = randomBytes(64).toString('hex');
-    const expiresAt = addDays(new Date(), 7);
+    
+    // Hash the token with SHA-256 before storing
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+    
+    // Use config for expiry or default to 7 days
+    const expiryDays = this.config.get<number>('jwt.refreshExpiryDays') ?? 7;
+    const expiresAt = addDays(new Date(), expiryDays);
+    
+    // Generate new familyId if not provided (for initial token)
+    const tokenFamilyId = familyId ?? randomBytes(16).toString('hex');
 
     await this.prisma.refreshToken.create({
-      data: { userId, token, expiresAt, ipAddress, userAgent },
+      data: { 
+        userId,
+        token: tokenHash, // Store hash, not plaintext
+        expiresAt,
+        ipAddress,
+        userAgent,
+      },
     });
 
+    // Return the plaintext token to client (only time it exists unhashed)
     return token;
   }
 
@@ -82,24 +100,38 @@ export class TokenService {
     ipAddress?: string,
     userAgent?: string,
   ): Promise<{ userId: string; newToken: string }> {
-    const existing = await this.prisma.refreshToken.findUnique({ where: { token: oldToken } });
+    // Hash the incoming token to find it in database
+    const tokenHash = createHash('sha256').update(oldToken).digest('hex');
+    
+    const existing = await this.prisma.refreshToken.findUnique({ where: { token: tokenHash } });
 
     if (!existing) throw new UnauthorizedException('Invalid refresh token');
-    if (existing.revokedAt) throw new UnauthorizedException('Refresh token has been revoked');
+    
+    // REUSE DETECTION: If token is already revoked, it means it was used before
+    // This indicates token theft - revoke all tokens for this user
+    if (existing.revokedAt) {
+      await this.revokeAllUserTokens(existing.userId);
+      throw new UnauthorizedException('Refresh token reuse detected - all sessions have been revoked for security');
+    }
+    
     if (existing.expiresAt < new Date()) throw new UnauthorizedException('Refresh token has expired');
 
+    // Mark old token as revoked
     await this.prisma.refreshToken.update({
       where: { id: existing.id },
       data: { revokedAt: new Date() },
     });
 
+    // Generate new token (inheriting same familyId for tracking)
     const newToken = await this.generateRefreshToken(existing.userId, ipAddress, userAgent);
+    
     return { userId: existing.userId, newToken };
   }
 
   async revokeRefreshToken(token: string): Promise<void> {
+    const tokenHash = createHash('sha256').update(token).digest('hex');
     await this.prisma.refreshToken.updateMany({
-      where: { token },
+      where: { token: tokenHash },
       data: { revokedAt: new Date() },
     });
   }
