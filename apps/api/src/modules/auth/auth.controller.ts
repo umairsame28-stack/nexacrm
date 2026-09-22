@@ -17,6 +17,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { TotpVerifyDto, TotpConfirmDto, TotpDisableDto } from './dto/totp-verify.dto';
+import { RecoveryCodeLoginDto } from './dto/recovery-code.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -99,6 +100,35 @@ export class AuthController {
     const result = await this.authService.loginWithTotp(
       dto.tempToken,
       dto.code,
+      req.ip,
+      req.headers['user-agent'],
+    );
+
+    if (result.refreshToken) {
+      this.setRefreshTokenCookie(res, result.refreshToken);
+    }
+
+    return {
+      accessToken: result.accessToken,
+      expiresIn: result.expiresIn,
+      user: result.user,
+      workspace: result.workspace,
+    };
+  }
+
+  @Public()
+  @Post('login/recovery-code')
+  @UseGuards(ThrottlerGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Complete login with recovery code' })
+  async loginWithRecoveryCode(
+    @Body() dto: RecoveryCodeLoginDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.loginWithRecoveryCode(
+      dto.tempToken,
+      dto.recoveryCode,
       req.ip,
       req.headers['user-agent'],
     );

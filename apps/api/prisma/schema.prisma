@@ -232,6 +232,7 @@ model User {
 
   workspaceMembers WorkspaceMember[]
   refreshTokens    RefreshToken[]
+  totpRecoveryCodes TotpRecoveryCode[]
   auditLogs        AuditLog[]
   assignedLeads    Lead[]          @relation("LeadAssignee")
   assignedDeals    Deal[]          @relation("DealAssignee")
@@ -278,6 +279,19 @@ model RefreshToken {
 
   @@index([token])
   @@index([userId])
+}
+
+model TotpRecoveryCode {
+  id        String    @id @default(uuid())
+  userId    String
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, usedAt])
 }
 
 model WorkspaceInvitation {

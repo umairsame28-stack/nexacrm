@@ -11,6 +11,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
 import { TotpService } from './totp.service';
+import { EncryptionService } from './encryption.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { toSlug, uniqueSlug } from '../../common/utils/slug.util';
@@ -41,6 +42,7 @@ export class AuthService {
     private readonly passwordService: PasswordService,
     private readonly tokenService: TokenService,
     private readonly totpService: TotpService,
+    private readonly encryptionService: EncryptionService,
     private readonly config: ConfigService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
@@ -217,10 +219,76 @@ export class AuthService {
       throw new UnauthorizedException('Invalid session');
     }
 
-    const isValid = this.totpService.verify(user.totpSecret, code);
+    // Decrypt the stored secret before verification
+    const decryptedSecret = this.encryptionService.decrypt(user.totpSecret);
+    const isValid = this.totpService.verify(decryptedSecret, code);
     if (!isValid) {
       throw new UnauthorizedException('Invalid TOTP code');
     }
+
+    await this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+
+    const { accessToken, expiresIn } = this.tokenService.generateAccessToken({
+      sub: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    });
+    const refreshToken = await this.tokenService.generateRefreshToken(user.id, ipAddress, userAgent);
+
+    // Resolve workspace
+    const memberships = await this.prisma.workspaceMember.findMany({
+      where: { userId: user.id, isActive: true },
+      select: { workspaceId: true },
+      take: 1,
+    });
+    const workspace = memberships[0]
+      ? await this.prisma.workspace.findUnique({ where: { id: memberships[0].workspaceId } })
+      : null;
+
+    return {
+      accessToken,
+      expiresIn,
+      refreshToken,
+      requiresTOTP: false,
+      user: { id: user.id, firstName: user.firstName, email: user.email, lastName: user.lastName },
+      workspace: workspace ? { id: workspace.id, name: workspace.name, slug: workspace.slug } : undefined,
+    };
+  }
+
+  async loginWithRecoveryCode(tempToken: string, recoveryCode: string, ipAddress?: string, userAgent?: string): Promise<LoginResult> {
+    const userId = this.tokenService.validateTempToken(tempToken);
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.totpEnabled) {
+      throw new UnauthorizedException('Invalid session');
+    }
+
+    // Normalize recovery code (remove spaces, convert to uppercase)
+    const normalizedCode = recoveryCode.replace(/\s+/g, '').toUpperCase();
+
+    // Find matching unused recovery code
+    const recoveryCodes = await this.prisma.totpRecoveryCode.findMany({
+      where: { userId, usedAt: null },
+    });
+
+    let matchedCode: { id: string; codeHash: string } | null = null;
+    for (const rc of recoveryCodes) {
+      if (this.encryptionService.compareHash(normalizedCode, rc.codeHash)) {
+        matchedCode = rc;
+        break;
+      }
+    }
+
+    if (!matchedCode) {
+      throw new UnauthorizedException('Invalid or already used recovery code');
+    }
+
+    // Mark recovery code as used
+    await this.prisma.totpRecoveryCode.update({
+      where: { id: matchedCode.id },
+      data: { usedAt: new Date() },
+    });
 
     await this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
 
@@ -402,10 +470,13 @@ export class AuthService {
     const { secret, otpauthUrl } = this.totpService.generateSecret(user.email);
     const qrCodeUrl = await this.totpService.generateQrCodeUrl(otpauthUrl);
 
-    // Store secret temporarily (not enabled until confirmed)
+    // Encrypt secret before storing
+    const encryptedSecret = this.encryptionService.encrypt(secret);
+
+    // Store encrypted secret temporarily (not enabled until confirmed)
     await this.prisma.user.update({
       where: { id: userId },
-      data: { totpSecret: secret, totpEnabled: false },
+      data: { totpSecret: encryptedSecret, totpEnabled: false },
     });
 
     return { secret, qrCodeUrl };
@@ -417,17 +488,36 @@ export class AuthService {
       throw new BadRequestException('TOTP setup not initiated');
     }
 
-    const isValid = this.totpService.verify(user.totpSecret, code);
+    // Decrypt the stored secret before verification
+    const decryptedSecret = this.encryptionService.decrypt(user.totpSecret);
+    const isValid = this.totpService.verify(decryptedSecret, code);
     if (!isValid) {
       throw new BadRequestException('Invalid TOTP code');
     }
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { totpEnabled: true },
-    });
-
+    // Generate recovery codes
     const recoveryCodes = this.totpService.generateRecoveryCodes();
+
+    // Hash and store recovery codes in database
+    await this.prisma.$transaction([
+      // Enable TOTP
+      this.prisma.user.update({
+        where: { id: userId },
+        data: { totpEnabled: true },
+      }),
+      // Delete any old recovery codes
+      this.prisma.totpRecoveryCode.deleteMany({
+        where: { userId },
+      }),
+      // Store new hashed recovery codes
+      this.prisma.totpRecoveryCode.createMany({
+        data: recoveryCodes.map((code) => ({
+          userId,
+          codeHash: this.encryptionService.hash(code),
+        })),
+      }),
+    ]);
+
     return { recoveryCodes };
   }
 
@@ -437,7 +527,9 @@ export class AuthService {
       throw new BadRequestException('2FA is not enabled');
     }
 
-    const isValid = this.totpService.verify(user.totpSecret, code);
+    // Decrypt the stored secret before verification
+    const decryptedSecret = this.encryptionService.decrypt(user.totpSecret);
+    const isValid = this.totpService.verify(decryptedSecret, code);
     if (!isValid) {
       throw new UnauthorizedException('Invalid TOTP code');
     }
@@ -445,6 +537,11 @@ export class AuthService {
     await this.prisma.user.update({
       where: { id: userId },
       data: { totpEnabled: false, totpSecret: null },
+    });
+
+    // Delete all recovery codes
+    await this.prisma.totpRecoveryCode.deleteMany({
+      where: { userId },
     });
   }
 

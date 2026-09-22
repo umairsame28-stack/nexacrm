@@ -115,7 +115,12 @@ export class TokenService {
    * Short-lived temp token for the TOTP two-step login flow.
    */
   generateTempToken(userId: string): string {
-    const secret = this.config.get<string>('jwt.accessSecret') ?? 'temp-secret';
+    const secret = this.config.get<string>('jwt.accessSecret');
+    
+    if (!secret) {
+      throw new Error('JWT_ACCESS_SECRET is not configured');
+    }
+
     return this.jwtService.sign(
       { sub: userId, type: 'totp_pending' },
       { algorithm: 'HS256', secret, expiresIn: '5m' as unknown as number },
@@ -123,7 +128,12 @@ export class TokenService {
   }
 
   validateTempToken(token: string): string {
-    const secret = this.config.get<string>('jwt.accessSecret') ?? 'temp-secret';
+    const secret = this.config.get<string>('jwt.accessSecret');
+    
+    if (!secret) {
+      throw new UnauthorizedException('JWT_ACCESS_SECRET is not configured');
+    }
+
     try {
       const payload = this.jwtService.verify<{ sub: string; type: string }>(token, { secret });
       if (payload.type !== 'totp_pending') {

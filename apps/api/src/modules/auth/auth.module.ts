@@ -8,6 +8,7 @@ import { AuthListener } from './auth.listener';
 import { TokenService } from './token.service';
 import { PasswordService } from './password.service';
 import { TotpService } from './totp.service';
+import { EncryptionService } from './encryption.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { NotificationsModule } from '../notifications/notifications.module';
@@ -30,7 +31,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthListener, TokenService, PasswordService, TotpService, JwtStrategy],
+  providers: [AuthService, AuthListener, TokenService, PasswordService, TotpService, EncryptionService, JwtStrategy],
   exports: [AuthService, TokenService, PasswordService, JwtModule, PassportModule],
 })
 export class AuthModule {}
