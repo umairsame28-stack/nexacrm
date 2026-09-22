@@ -3,6 +3,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
 import { createLogger, format, transports } from 'winston';
+import helmet from 'helmet';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const cookieParser: () => import('express').RequestHandler = require('cookie-parser');
 import { AppModule } from './app.module';
@@ -35,6 +36,45 @@ async function bootstrap(): Promise<void> {
   const port = config.get<number>('app.port', 3001);
   const corsOrigins = config.get<string>('app.corsOrigins', 'http://localhost:3000');
   const apiPrefix = config.get<string>('app.apiPrefix', 'api/v1');
+  const nodeEnv = config.get<string>('app.nodeEnv', 'development');
+  const isProduction = nodeEnv === 'production';
+
+  // Helmet security headers
+  app.use(
+    helmet({
+      contentSecurityPolicy: isProduction
+        ? {
+            directives: {
+              defaultSrc: ["'self'"],
+              styleSrc: ["'self'", "'unsafe-inline'"],
+              scriptSrc: ["'self'"],
+              imgSrc: ["'self'", 'data:', 'https:'],
+              connectSrc: ["'self'"],
+              fontSrc: ["'self'"],
+              objectSrc: ["'none'"],
+              mediaSrc: ["'self'"],
+              frameSrc: ["'none'"],
+            },
+          }
+        : false, // Disable CSP in dev to allow Swagger UI
+      crossOriginEmbedderPolicy: false, // Required for some file uploads
+      crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow cross-origin requests
+      dnsPrefetchControl: { allow: false },
+      frameguard: { action: 'deny' },
+      hidePoweredBy: true,
+      hsts: isProduction
+        ? {
+            maxAge: 31536000, // 1 year
+            includeSubDomains: true,
+            preload: true,
+          }
+        : false,
+      ieNoOpen: true,
+      noSniff: true,
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+      xssFilter: true,
+    }),
+  );
 
   // Middleware
   app.use(cookieParser());
@@ -59,7 +99,7 @@ async function bootstrap(): Promise<void> {
   );
 
   // Swagger documentation
-  if (config.get<string>('app.nodeEnv') !== 'production') {
+  if (nodeEnv !== 'production') {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('NexaCRM API')
       .setDescription('AI-Powered WhatsApp CRM SaaS — REST API Documentation')

@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BullModule } from '@nestjs/bull';
+import { APP_GUARD } from '@nestjs/core';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import redisConfig from './config/redis.config';
@@ -11,6 +12,9 @@ import s3Config from './config/s3.config';
 import securityConfig from './config/security.config';
 import { PrismaModule } from './prisma/prisma.module';
 import { CommonModule } from './common/common.module';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { WorkspaceGuard } from './common/guards/workspace.guard';
+import { RolesGuard } from './common/guards/roles.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { TeamsModule } from './modules/teams/teams.module';
@@ -107,6 +111,29 @@ import { WebsocketModule } from './websocket/websocket.module';
     SettingsModule,
     StorageModule,
     DashboardModule,
+  ],
+  providers: [
+    // Global guards applied in order:
+    // 1. Throttling (rate limiting)
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    // 2. JWT Authentication
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    // 3. Workspace membership verification
+    {
+      provide: APP_GUARD,
+      useClass: WorkspaceGuard,
+    },
+    // 4. Role-based access control
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
