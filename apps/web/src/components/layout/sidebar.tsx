@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Lightbulb, Briefcase, MessageSquare,
   CheckSquare, Calendar, BarChart2, UserCog, Settings, ChevronLeft, ChevronRight,
-  Circle
+  Circle, Shield, Building2, Activity
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useUIStore } from '@/stores/ui.store';
@@ -26,17 +26,28 @@ const navItems = [
   { href: '/settings', label: 'Settings', icon: Settings, group: 'admin' },
 ];
 
+const superAdminItems = [
+  { href: '/admin', label: 'Overview', icon: Shield, group: 'superadmin' },
+  { href: '/admin/users', label: 'Users', icon: Users, group: 'superadmin' },
+  { href: '/admin/workspaces', label: 'Workspaces', icon: Building2, group: 'superadmin' },
+  { href: '/admin/system', label: 'System', icon: Activity, group: 'superadmin' },
+];
+
 const groups = [
   { key: 'main', label: 'Main' },
   { key: 'tools', label: 'Tools' },
   { key: 'admin', label: 'Admin' },
+  { key: 'superadmin', label: 'Super Admin', requiresSuperAdmin: true },
 ];
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
-  const { user, workspace } = useAuthStore();
+  const { user, workspace, isSuperAdmin } = useAuthStore();
   const { unreadCount } = useNotificationStore();
+
+  // Combine regular nav items with super admin items if user is super admin
+  const allNavItems = isSuperAdmin() ? [...navItems, ...superAdminItems] : navItems;
 
   return (
     <div className="h-full flex flex-col relative overflow-hidden bg-sidebar">
@@ -72,7 +83,18 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-4 py-6 scrollbar-hide space-y-8">
           {groups.map((group) => {
-            const groupItems = navItems.filter((i) => i.group === group.key);
+            // Skip super admin group if user is not a super admin
+            if (group.requiresSuperAdmin && !isSuperAdmin()) {
+              return null;
+            }
+
+            const groupItems = allNavItems.filter((i) => i.group === group.key);
+            
+            // Don't render empty groups
+            if (groupItems.length === 0) {
+              return null;
+            }
+
             return (
               <div key={group.key}>
                 {!sidebarCollapsed && (

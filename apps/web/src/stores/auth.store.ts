@@ -8,6 +8,7 @@ interface User {
   lastName: string;
   avatarUrl?: string | null;
   totpEnabled: boolean;
+  systemRole?: 'USER' | 'SUPER_ADMIN';
 }
 
 interface Workspace {
@@ -24,6 +25,7 @@ interface AuthState {
   workspace: Workspace | null;
   accessToken: string | null;
   isAuthenticated: boolean;
+  isSuperAdmin: () => boolean;
 
   setAuth: (user: User, workspace: Workspace, accessToken: string) => void;
   setAccessToken: (token: string) => void;
@@ -38,6 +40,11 @@ export const useAuthStore = create<AuthState>()(
       workspace: null,
       accessToken: null,
       isAuthenticated: false,
+
+      isSuperAdmin: () => {
+        const state = useAuthStore.getState();
+        return state.user?.systemRole === 'SUPER_ADMIN';
+      },
 
       setAuth: (user, workspace, accessToken) => {
         // Also store in localStorage for axios interceptor
