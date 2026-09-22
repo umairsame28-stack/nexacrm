@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -239,6 +240,45 @@ export class AuthController {
     @Body() dto: TotpDisableDto,
   ) {
     await this.authService.disableTotp(user.id, dto.code);
+  }
+
+  @Public()
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Initiate Google OAuth login' })
+  async googleAuth() {
+    // Guard redirects to Google
+  }
+
+  @Public()
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Google OAuth callback' })
+  async googleAuthCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const googleUser = req.user as {
+      googleId: string;
+      email: string;
+      firstName: string;
+      lastName: string;
+      avatarUrl?: string;
+    };
+
+    const result = await this.authService.googleLogin(
+      googleUser,
+      req.ip,
+      req.headers['user-agent'],
+    );
+
+    this.setRefreshTokenCookie(res, result.refreshToken);
+
+    // Redirect to frontend with access token
+    const frontendUrl = this.config.get<string>('app.frontendUrl', 'http://localhost:3000');
+    const redirectUrl = `${frontendUrl}/auth/callback?token=${result.accessToken}&workspace=${result.workspace.id}`;
+    
+    res.redirect(redirectUrl);
   }
 
   private setRefreshTokenCookie(res: Response, token: string): void {

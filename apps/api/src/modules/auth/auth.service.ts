@@ -545,6 +545,110 @@ export class AuthService {
     });
   }
 
+  async googleLogin(googleUser: {
+    googleId: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl?: string;
+  }, ipAddress?: string, userAgent?: string): Promise<RegisterResult> {
+    // Check if user already exists
+    let user = await this.prisma.user.findUnique({ where: { email: googleUser.email.toLowerCase() } });
+
+    if (!user) {
+      // Create new user + workspace
+      const { user: newUser, workspace } = await this.prisma.$transaction(async (tx) => {
+        const createdUser = await tx.user.create({
+          data: {
+            email: googleUser.email.toLowerCase(),
+            firstName: googleUser.firstName,
+            lastName: googleUser.lastName,
+            avatarUrl: googleUser.avatarUrl,
+            status: 'ACTIVE',
+            emailVerified: true, // Google emails are verified
+          },
+        });
+
+        // Create workspace with user's name
+        const workspaceName = `${googleUser.firstName}'s Workspace`;
+        let slug = toSlug(workspaceName);
+        let suffix = 1;
+        while (await tx.workspace.findUnique({ where: { slug } })) {
+          slug = uniqueSlug(toSlug(workspaceName), suffix++);
+        }
+
+        const createdWorkspace = await tx.workspace.create({
+          data: {
+            name: workspaceName,
+            slug,
+            members: {
+              create: {
+                userId: createdUser.id,
+                role: 'OWNER' as WorkspaceMemberRole,
+                isActive: true,
+              },
+            },
+            settings: {
+              create: {},
+            },
+          },
+        });
+
+        return { user: createdUser, workspace: createdWorkspace };
+      });
+
+      // Seed default pipelines
+      await this.seedDefaultPipelines(workspace.id);
+
+      user = newUser;
+      
+      this.eventEmitter.emit('user.registered', { userId: user.id, workspaceId: workspace.id });
+    }
+
+    // Generate tokens
+    const { accessToken, expiresIn } = this.tokenService.generateAccessToken({
+      sub: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    });
+    const refreshToken = await this.tokenService.generateRefreshToken(user.id, ipAddress, userAgent);
+
+    // Get workspace
+    const memberships = await this.prisma.workspaceMember.findMany({
+      where: { userId: user.id, isActive: true },
+      select: { workspaceId: true },
+      take: 1,
+    });
+    const workspace = memberships[0]
+      ? await this.prisma.workspace.findUnique({ where: { id: memberships[0].workspaceId } })
+      : null;
+
+    if (!workspace) {
+      throw new UnauthorizedException('No workspace found for this account');
+    }
+
+    // Audit log
+    await this.prisma.auditLog.create({
+      data: {
+        workspaceId: workspace.id,
+        userId: user.id,
+        action: 'LOGIN',
+        resource: 'auth',
+        ipAddress,
+        userAgent,
+      },
+    });
+
+    return {
+      user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+      workspace: { id: workspace.id, name: workspace.name, slug: workspace.slug },
+      accessToken,
+      expiresIn,
+      refreshToken,
+    };
+  }
+
   // ─── Private helpers ──────────────────────────────────────────────────────
 
   /**
