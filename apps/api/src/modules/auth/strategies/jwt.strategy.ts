@@ -10,6 +10,7 @@ interface JwtPayload {
   email: string;
   firstName: string;
   lastName: string;
+  systemRole?: 'USER' | 'SUPER_ADMIN';
   iat?: number;
   exp?: number;
 }

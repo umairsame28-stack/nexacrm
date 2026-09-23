@@ -106,6 +106,7 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      systemRole: user.systemRole,
     });
     const refreshToken = await this.tokenService.generateRefreshToken(user.id, ipAddress, userAgent);
 
@@ -178,6 +179,7 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      systemRole: user.systemRole,
     });
     const refreshToken = await this.tokenService.generateRefreshToken(user.id, ipAddress, userAgent);
 
@@ -223,6 +225,7 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      systemRole: user.systemRole,
     });
     const refreshToken = await this.tokenService.generateRefreshToken(user.id, ipAddress, userAgent);
 
@@ -287,6 +290,7 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      systemRole: user.systemRole,
     });
     const refreshToken = await this.tokenService.generateRefreshToken(user.id, ipAddress, userAgent);
 
@@ -327,6 +331,7 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      systemRole: user.systemRole,
     });
 
     return { accessToken, expiresIn, newRefreshToken: newToken };
@@ -603,6 +608,7 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      systemRole: user.systemRole,
     });
     const refreshToken = await this.tokenService.generateRefreshToken(user.id, ipAddress, userAgent);
 

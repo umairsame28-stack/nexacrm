@@ -15,6 +15,7 @@ interface JwtPayload {
   email: string;
   firstName: string;
   lastName: string;
+  systemRole?: 'USER' | 'SUPER_ADMIN';
 }
 
 @Injectable()
@@ -39,6 +40,7 @@ export class TokenService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      systemRole: user.systemRole,
     };
 
     let token: string;
