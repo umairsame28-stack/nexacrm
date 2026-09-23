@@ -112,7 +112,7 @@ export class AuthService {
     this.eventEmitter.emit('user.registered', { userId: user.id, workspaceId: workspace.id });
 
     return {
-      user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+      user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, systemRole: user.systemRole },
       workspace: { id: workspace.id, name: workspace.name, slug: workspace.slug },
       accessToken,
       expiresIn,
@@ -196,7 +196,7 @@ export class AuthService {
       expiresIn,
       refreshToken,
       requiresTOTP: false,
-      user: { id: user.id, firstName: user.firstName, email: user.email, lastName: user.lastName },
+      user: { id: user.id, firstName: user.firstName, email: user.email, lastName: user.lastName, systemRole: user.systemRole },
       workspace: workspace ? { id: workspace.id, name: workspace.name, slug: workspace.slug } : undefined,
     };
   }
@@ -241,7 +241,7 @@ export class AuthService {
       expiresIn,
       refreshToken,
       requiresTOTP: false,
-      user: { id: user.id, firstName: user.firstName, email: user.email, lastName: user.lastName },
+      user: { id: user.id, firstName: user.firstName, email: user.email, lastName: user.lastName, systemRole: user.systemRole },
       workspace: workspace ? { id: workspace.id, name: workspace.name, slug: workspace.slug } : undefined,
     };
   }
@@ -305,7 +305,7 @@ export class AuthService {
       expiresIn,
       refreshToken,
       requiresTOTP: false,
-      user: { id: user.id, firstName: user.firstName, email: user.email, lastName: user.lastName },
+      user: { id: user.id, firstName: user.firstName, email: user.email, lastName: user.lastName, systemRole: user.systemRole },
       workspace: workspace ? { id: workspace.id, name: workspace.name, slug: workspace.slug } : undefined,
     };
   }
@@ -635,7 +635,7 @@ export class AuthService {
     });
 
     return {
-      user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+      user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, systemRole: user.systemRole },
       workspace: { id: workspace.id, name: workspace.name, slug: workspace.slug },
       accessToken,
       expiresIn,
