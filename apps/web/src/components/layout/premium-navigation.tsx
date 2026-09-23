@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Users, Lightbulb, Briefcase, MessageSquare,
   CheckSquare, Calendar, BarChart2, UserCog, Settings,
   Bot, Zap, MessageCircle, BookOpen, FileText, Headphones,
-  Gift, Menu, X, Command
+  Gift, Menu, X, Command, Shield, Building2, Activity
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
@@ -47,6 +47,16 @@ const platformMenuItems = {
     items: [
       { href: '/settings/ai', label: 'AI Assistant', icon: Bot, description: 'Intelligent CRM assistance' },
       { href: '/settings/whatsapp', label: 'WhatsApp', icon: MessageCircle, description: 'Customer communication' },
+    ]
+  },
+  superAdmin: {
+    title: 'Super Admin',
+    requiresSuperAdmin: true,
+    items: [
+      { href: '/admin', label: 'Overview', icon: Shield, description: 'Platform administration' },
+      { href: '/admin/users', label: 'Users', icon: Users, description: 'Manage all users' },
+      { href: '/admin/workspaces', label: 'Workspaces', icon: Building2, description: 'Manage workspaces' },
+      { href: '/admin/system', label: 'System', icon: Activity, description: 'System monitoring' },
     ]
   }
 };
@@ -98,7 +108,7 @@ const resourcesMenuItems = {
 export function PremiumNavigation() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
-  const { user, logout } = useAuthStore();
+  const { user, logout, isSuperAdmin } = useAuthStore();
   const { notifications, unreadCount, isOpen, setOpen, markAllAsRead } = useNotificationStore();
   const router = useRouter();
   
@@ -547,7 +557,7 @@ export function PremiumNavigation() {
           <div className="max-w-6xl mx-auto px-6 py-8">
             {/* Platform Menu */}
             {activeMegaMenu === 'platform' && (
-              <div className="grid grid-cols-3 gap-8">
+              <div className={cn("grid gap-8", isSuperAdmin() ? "grid-cols-4" : "grid-cols-3")}>
                 {/* CRM Column */}
                 <div>
                   <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">
@@ -583,28 +593,44 @@ export function PremiumNavigation() {
                     ))}
                   </div>
                   
-                  {/* Featured Area - Subtle Tan Accent */}
-                  <div className="mt-6 p-4 rounded-lg bg-tan-soft dark:bg-tan-soft/10 border border-tan/20">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0">
-                        <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                          <Zap className="h-4 w-4 text-white" />
+                  {/* Featured Area - Only show if not super admin */}
+                  {!isSuperAdmin() && (
+                    <div className="mt-6 p-4 rounded-lg bg-tan-soft dark:bg-tan-soft/10 border border-tan/20">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0">
+                          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                            <Zap className="h-4 w-4 text-white" />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-foreground mb-1">NexaCRM AI</p>
+                          <p className="text-xs text-muted-foreground mb-3">Automate repetitive work with intelligent workflows</p>
+                          <Link 
+                            href="/settings/ai"
+                            onClick={() => setActiveMegaMenu(null)}
+                            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary-hover"
+                          >
+                            Explore AI →
+                          </Link>
                         </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-foreground mb-1">NexaCRM AI</p>
-                        <p className="text-xs text-muted-foreground mb-3">Automate repetitive work with intelligent workflows</p>
-                        <Link 
-                          href="/settings/ai"
-                          onClick={() => setActiveMegaMenu(null)}
-                          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary-hover"
-                        >
-                          Explore AI →
-                        </Link>
-                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Super Admin Column - Only show for super admins */}
+                {isSuperAdmin() && (
+                  <div>
+                    <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">
+                      {platformMenuItems.superAdmin.title}
+                    </h3>
+                    <div className="space-y-1">
+                      {platformMenuItems.superAdmin.items.map((item) => (
+                        <MegaMenuItem key={item.href} item={item} onClick={() => setActiveMegaMenu(null)} />
+                      ))}
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
 
