@@ -87,7 +87,8 @@ export default function AdminSystemPage() {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem('nexacrm_access_token');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const headers = { Authorization: `Bearer ${token}` };
 
       // Fetch all data in parallel
@@ -100,13 +101,13 @@ export default function AdminSystemPage() {
         healthRes,
         superAdminsRes,
       ] = await Promise.all([
-        fetch('http://localhost:3001/admin/system/stats', { headers }),
-        fetch('http://localhost:3001/admin/system/activity?limit=20', { headers }),
-        fetch('http://localhost:3001/admin/system/failed-logins?limit=10', { headers }),
-        fetch('http://localhost:3001/admin/system/growth/users?days=30', { headers }),
-        fetch('http://localhost:3001/admin/system/growth/workspaces?days=30', { headers }),
-        fetch('http://localhost:3001/admin/system/health', { headers }),
-        fetch('http://localhost:3001/admin/system/super-admins', { headers }),
+        fetch(`${API_URL}/api/v1/admin/system/stats`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/system/activity?limit=20`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/system/failed-logins?limit=10`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/system/growth/users?days=30`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/system/growth/workspaces?days=30`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/system/health`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/system/super-admins`, { headers }),
       ]);
 
       const [

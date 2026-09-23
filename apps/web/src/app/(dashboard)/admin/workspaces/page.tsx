@@ -46,9 +46,10 @@ export default function AdminWorkspacesPage() {
   const fetchWorkspaces = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem('nexacrm_access_token');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const response = await fetch(
-        `http://localhost:3001/admin/workspaces?page=${page}&limit=10`,
+        `${API_URL}/api/v1/admin/workspaces?page=${page}&limit=10`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -68,9 +69,10 @@ export default function AdminWorkspacesPage() {
 
   const fetchWorkspaceStats = async (workspaceId: string) => {
     try {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem('nexacrm_access_token');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const response = await fetch(
-        `http://localhost:3001/admin/workspaces/${workspaceId}/stats`,
+        `${API_URL}/api/v1/admin/workspaces/${workspaceId}/stats`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -88,9 +90,10 @@ export default function AdminWorkspacesPage() {
 
   const updateWorkspaceStatus = async (workspaceId: string, status: 'ACTIVE' | 'SUSPENDED') => {
     try {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem('nexacrm_access_token');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const response = await fetch(
-        `http://localhost:3001/admin/workspaces/${workspaceId}/status`,
+        `${API_URL}/api/v1/admin/workspaces/${workspaceId}/status`,
         {
           method: 'PATCH',
           headers: {
@@ -117,9 +120,10 @@ export default function AdminWorkspacesPage() {
     }
 
     try {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem('nexacrm_access_token');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const response = await fetch(
-        `http://localhost:3001/admin/workspaces/${workspaceId}`,
+        `${API_URL}/api/v1/admin/workspaces/${workspaceId}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
